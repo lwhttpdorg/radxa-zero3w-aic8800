@@ -49,7 +49,7 @@ help:
 	@echo "Examples:"
 	@echo "  make KDIR=/home/user/linux-main"
 	@echo "  make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- KDIR=/home/user/linux-main"
-	@echo "  make install KDIR=/home/user/linux-main INSTALL_PATH=/mnt/zero3w-rootfs"
+	@echo "  make install KDIR=/home/user/linux-main INSTALL_PATH=/mnt/rootfs"
 
 build:
 	@echo "[BUILD] KDIR=$(KDIR)"
