@@ -2423,9 +2423,6 @@ int rwnx_send_me_config_req(struct rwnx_hw *rwnx_hw)
 	else
 		req->phy_bw_max = PHY_CHNL_BW_20;
 
-	wiphy_info(wiphy, "HT supp %d, VHT supp %d, HE supp %d\n", req->ht_supp,
-															   req->vht_supp,
-															   req->he_supp);
 	/* Send the ME_CONFIG_REQ message to LMAC FW */
 	return rwnx_send_msg(rwnx_hw, req, 1, ME_CONFIG_CFM, NULL);
 }

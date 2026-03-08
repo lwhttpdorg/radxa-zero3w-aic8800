@@ -1583,9 +1583,7 @@ if (rwnx_hw->mod_params->custregd) {
         // function, that needs to be called after wiphy registration
         memcpy(country_code, default_ccode, sizeof(default_ccode));
 		regdomain = getRegdomainFromRwnxDB(wiphy, default_ccode);
-        printk(KERN_CRIT
-               "\n\n%s: CAUTION: USING PERMISSIVE CUSTOM REGULATORY RULES\n\n",
-               __func__);
+        printk(KERN_INFO "aic8800: Using custom regulatory (custregd=1)\n");
         wiphy->regulatory_flags |= REGULATORY_CUSTOM_REG;
 		/* From kernel 6.5.0, this bit is removed and will be reused later */
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 5, 0)) && (LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 39) || LINUX_VERSION_CODE > KERNEL_VERSION(6, 2, 0))
@@ -1789,11 +1787,8 @@ void rwnx_custregd(struct rwnx_hw *rwnx_hw, struct wiphy *wiphy)
 	#endif
 
     else{
-        wiphy_err(wiphy,"\n"
-                  "*******************************************************\n"
-                  "** CAUTION: USING PERMISSIVE CUSTOM REGULATORY RULES **\n"
-                  "*******************************************************\n");
-    }
+		wiphy_info(wiphy, "Using custom regulatory (custregd=1)\n");
+	}
      rtnl_unlock();
 #endif
 
