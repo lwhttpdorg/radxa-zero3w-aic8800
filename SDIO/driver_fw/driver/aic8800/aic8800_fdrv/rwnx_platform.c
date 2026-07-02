@@ -1820,7 +1820,9 @@ void rwnx_plat_userconfig_parsing(struct rwnx_hw *rwnx_hw, char *buffer, int siz
 
 		// store value to data struct
 		for (i = 0; i < sizeof(parse_match_tab) / sizeof(parse_match_tab[0]); i++) {
-			sprintf(&keyname[0], "%s%s", parse_key_prefix[rwnx_hw->vendor_info], parse_match_tab[i].keyname);
+			snprintf(keyname, sizeof(keyname), "%s%s",
+				 parse_key_prefix[rwnx_hw->vendor_info],
+				 parse_match_tab[i].keyname);
 			if (parse_key_val(line, keyname, conf) == 0) {
 				err = kstrtol(conf, 0, &val);
 				*(unsigned long *)((unsigned long)&nvram_info + parse_match_tab[i].offset) = val;
@@ -3425,5 +3427,4 @@ MODULE_FIRMWARE(RWNX_MAC_FW_NAME);
 #ifndef CONFIG_RWNX_TL4
 MODULE_FIRMWARE(RWNX_MAC_FW_NAME2);
 #endif
-
 

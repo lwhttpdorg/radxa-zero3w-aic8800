@@ -8,7 +8,6 @@ SDIO_FW_DIR  := $(CURDIR)/SDIO/driver_fw/fw
 ARCH ?=
 CROSS_COMPILE ?=
 KDIR ?= /lib/modules/$(shell uname -r)/build
-BUILD_DIR ?= $(CURDIR)/build
 
 # Install options (override from command line)
 # Example:
@@ -19,7 +18,7 @@ KERNELRELEASE ?= $(shell $(MAKE) -s -C "$(KDIR)" kernelrelease 2>/dev/null)
 MOD_DEST ?= $(INSTALL_PATH)/lib/modules/$(KERNELRELEASE)/extra
 FW_DEST ?= $(INSTALL_PATH)/lib/firmware/aic8800_fw/SDIO
 
-KBUILD_OPTS := M="$(SDIO_DRV_DIR)" MO="$(BUILD_DIR)"
+KBUILD_OPTS := M="$(SDIO_DRV_DIR)"
 ifneq ($(strip $(ARCH)),)
 KBUILD_OPTS += ARCH="$(ARCH)"
 endif
@@ -42,7 +41,6 @@ help:
 	@echo "  KDIR=<kernel source/build path>"
 	@echo "  ARCH=<target arch> (default: host/native)"
 	@echo "  CROSS_COMPILE=<toolchain prefix> (default: host/native)"
-	@echo "  BUILD_DIR=<output directory for .o/.ko etc> (default: $(BUILD_DIR))"
 	@echo "  INSTALL_PATH=<root path to install into> (default: $(INSTALL_PATH))"
 	@echo "  INSTALL_MOD_PATH=<same as INSTALL_PATH, for module install prefix>"
 	@echo
@@ -53,10 +51,9 @@ help:
 	@echo "  make uninstall KDIR=/home/user/linux-main INSTALL_PATH=/mnt/rootfs"
 
 build:
-	@echo "[BUILD] KDIR=$(KDIR) OUTPUT=$(BUILD_DIR)"
-	@# Clean source dir if it has leftover artifacts (required when using MO=)
+	@echo "[BUILD] KDIR=$(KDIR)"
+	@# Clean source dir if it has leftover artifacts
 	-$(MAKE) -C "$(KDIR)" M="$(SDIO_DRV_DIR)" $(if $(strip $(ARCH)),ARCH="$(ARCH)",) $(if $(strip $(CROSS_COMPILE)),CROSS_COMPILE="$(CROSS_COMPILE)",) clean 2>/dev/null || true
-	mkdir -p "$(BUILD_DIR)"
 	$(MAKE) -C "$(KDIR)" $(KBUILD_OPTS) modules
 
 install: build
@@ -80,5 +77,3 @@ uninstall:
 
 clean:
 	$(MAKE) -C "$(KDIR)" $(KBUILD_OPTS) clean
-	rm -rf "$(BUILD_DIR)"
-

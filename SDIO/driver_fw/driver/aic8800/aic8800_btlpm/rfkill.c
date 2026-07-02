@@ -18,7 +18,6 @@
 #include <linux/gpio.h>
 #include <linux/ioport.h>
 #include <linux/clk.h>
-#include <linux/of_gpio.h>
 #include <linux/version.h>
 #include "aic_bsp_export.h"
 
@@ -80,4 +79,3 @@ int rfkill_bluetooth_remove(struct platform_device *dev)
 	pr_info("<--%s\n", __func__);
 	return 0;
 }
-
