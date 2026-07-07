@@ -8,13 +8,15 @@ SDIO_FW_DIR  := $(CURDIR)/SDIO/driver_fw/fw
 ARCH ?=
 CROSS_COMPILE ?=
 KDIR ?= /lib/modules/$(shell uname -r)/build
+LOCALVERSION ?=
+LOCALVERSION_AUTO ?=
 
 # Install options (override from command line)
 # Example:
 #   make install INSTALL_PATH=/mnt/zero3w-rootfs
 INSTALL_PATH ?= /
 INSTALL_MOD_PATH ?= $(INSTALL_PATH)
-KERNELRELEASE ?= $(shell $(MAKE) -s -C "$(KDIR)" kernelrelease 2>/dev/null)
+KERNELRELEASE ?= $(shell $(MAKE) -s -C "$(KDIR)" LOCALVERSION="$(LOCALVERSION)" LOCALVERSION_AUTO="$(LOCALVERSION_AUTO)" kernelrelease 2>/dev/null)
 MOD_DEST ?= $(INSTALL_PATH)/lib/modules/$(KERNELRELEASE)/extra
 FW_DEST ?= $(INSTALL_PATH)/lib/firmware/aic8800_fw/SDIO
 
@@ -25,6 +27,8 @@ endif
 ifneq ($(strip $(CROSS_COMPILE)),)
 KBUILD_OPTS += CROSS_COMPILE="$(CROSS_COMPILE)"
 endif
+KBUILD_OPTS += LOCALVERSION="$(LOCALVERSION)"
+KBUILD_OPTS += LOCALVERSION_AUTO="$(LOCALVERSION_AUTO)"
 
 .DEFAULT_GOAL := build
 
@@ -53,7 +57,7 @@ help:
 build:
 	@echo "[BUILD] KDIR=$(KDIR)"
 	@# Clean source dir if it has leftover artifacts
-	-$(MAKE) -C "$(KDIR)" M="$(SDIO_DRV_DIR)" $(if $(strip $(ARCH)),ARCH="$(ARCH)",) $(if $(strip $(CROSS_COMPILE)),CROSS_COMPILE="$(CROSS_COMPILE)",) clean 2>/dev/null || true
+	-$(MAKE) -C "$(KDIR)" $(KBUILD_OPTS) clean 2>/dev/null || true
 	$(MAKE) -C "$(KDIR)" $(KBUILD_OPTS) modules
 
 install: build

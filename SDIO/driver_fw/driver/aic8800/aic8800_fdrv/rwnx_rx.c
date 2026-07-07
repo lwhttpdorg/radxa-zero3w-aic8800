@@ -2136,7 +2136,7 @@ void remove_sec_hdr_mgmt_frame(struct hw_rxhdr *hw_rxhdr, struct sk_buff *skb)
 
 	if (!hw_rxhdr->hwvect.ga_frame) {
 		if (((skb->data[0] & 0x0C) == 0) && (skb->data[1] & 0x40) == 0x40) { //protect management frame
-			printk("frame type %x\n", skb->data[0]);
+			AICWFDBG(LOGDEBUG, "frame type %x\n", skb->data[0]);
 			if((hw_rxhdr->hwvect.decr_status == RWNX_RX_HD_DECR_CCMP128) ||
 			(hw_rxhdr->hwvect.decr_status == RWNX_RX_HD_DECR_CCMP256) ||
 			(hw_rxhdr->hwvect.decr_status == RWNX_RX_HD_DECR_GCMP128) ||
@@ -2867,4 +2867,3 @@ check_len_update:
 end:
 	return 0;
 }
-
