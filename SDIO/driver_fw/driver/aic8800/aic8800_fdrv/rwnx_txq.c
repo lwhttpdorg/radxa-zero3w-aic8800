@@ -12,7 +12,6 @@
 #include "rwnx_tx.h"
 #include "ipc_host.h"
 #include "rwnx_events.h"
-void rwnx_txq_flush(struct rwnx_hw *rwnx_hw, struct rwnx_txq *txq);
 
 /******************************************************************************
  * Utils functions

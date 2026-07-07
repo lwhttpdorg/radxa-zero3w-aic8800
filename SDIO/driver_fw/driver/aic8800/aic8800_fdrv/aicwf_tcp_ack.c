@@ -3,22 +3,6 @@
 //#include "aicwf_tcp_ack.h"
 #include"rwnx_defs.h"
 extern int intf_tx(struct rwnx_hw *priv,struct msg_buf *msg);
-void intf_tcp_drop_msg(struct rwnx_hw *priv, struct msg_buf *msg);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
-void tcp_ack_timeout(unsigned long data);
-#else
-void tcp_ack_timeout(struct timer_list *t);
-#endif
-int tcp_check_quick_ack(unsigned char *buf, struct tcp_ack_msg *msg);
-int tcp_check_ack(unsigned char *buf, struct tcp_ack_msg *msg, unsigned short *win_scale);
-int tcp_ack_match(struct tcp_ack_manage *ack_m, struct tcp_ack_msg *ack_msg);
-void tcp_ack_update(struct tcp_ack_manage *ack_m);
-int tcp_ack_alloc_index(struct tcp_ack_manage *ack_m);
-int tcp_ack_handle(struct msg_buf *new_msgbuf, struct tcp_ack_manage *ack_m,
-		   struct tcp_ack_info *ack_info, struct tcp_ack_msg *ack_msg, int type);
-int tcp_ack_handle_new(struct msg_buf *new_msgbuf, struct tcp_ack_manage *ack_m,
-		       struct tcp_ack_info *ack_info, struct tcp_ack_msg *ack_msg, int type);
-
 struct msg_buf *intf_tcp_alloc_msg(struct msg_buf *msg)
 {
 	//printk("%s \n",__func__);

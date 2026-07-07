@@ -1,4 +1,7 @@
 CONFIG_AIC8800_BTLPM_SUPPORT = m
+EXTRA_CFLAGS += -Wno-error=missing-prototypes
+ccflags-y += -Wno-missing-prototypes
+ccflags-y += -Wno-missing-declarations
 
 obj-$(CONFIG_AIC8800_BTLPM_SUPPORT) := aic8800_btlpm.o
 
@@ -79,5 +82,3 @@ uninstall:
 
 clean:
 	rm -rf *.o *.ko *.o.* *.mod.* modules.* Module.* .a* .o* .*.o.* *.mod .tmp* .cache.mk
-
-

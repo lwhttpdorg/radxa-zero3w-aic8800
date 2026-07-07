@@ -40,19 +40,6 @@
 
 #define FW_PATH_MAX_LEN 200
 extern char aic_fw_path[FW_PATH_MAX_LEN];
-int rwnx_request_firmware_common(struct rwnx_hw *rwnx_hw, u32** buffer, const char *filename);
-void rwnx_release_firmware_common(u32** buffer);
-int rwnx_plat_bin_fw_upload_2(struct rwnx_hw *rwnx_hw, u32 fw_addr, char *filename);
-int rwnx_atoi2(char *value, int c_len);
-int rwnx_atoi(char *value);
-void rwnx_plat_nvram_set_value(char *command, char *value);
-void rwnx_plat_nvram_set_value_v3(char *command, char *value);
-void rwnx_plat_userconfig_parsing2(char *buffer, int size);
-void rwnx_plat_userconfig_parsing3(char *buffer, int size);
-void rwnx_plat_userconfig_parsing(struct rwnx_hw *rwnx_hw, char *buffer, int size);
-void rwnx_plat_nvram_set_value_8800d80x2(char *command, char *value);
-void rwnx_plat_userconfig_parsing_8800d80x2(char *buffer, int size);
-int rwnx_plat_userconfig_upload_android(struct rwnx_hw *rwnx_hw, char *fw_path, char *filename);
 
 //Parser state
 #define INIT 0
@@ -269,6 +256,7 @@ reg_table reg_tables[] = {
 	{.ccode = "CL", .region = REGIONS_ETSI},
 	{.ccode = "CO", .region = REGIONS_FCC},
 	{.ccode = "CR", .region = REGIONS_FCC},
+	{.ccode = "CU", .region = REGIONS_FCC},
 	{.ccode = "CX", .region = REGIONS_FCC},
 	{.ccode = "CY", .region = REGIONS_ETSI},
 	{.ccode = "CZ", .region = REGIONS_ETSI},
@@ -293,7 +281,7 @@ reg_table reg_tables[] = {
 	{.ccode = "GL", .region = REGIONS_ETSI},
 	{.ccode = "GP", .region = REGIONS_ETSI},
 	{.ccode = "GR", .region = REGIONS_ETSI},
-	{.ccode = "GT", .region = REGIONS_FCC},
+	{.ccode = "GT", .region = REGIONS_DEFAULT},
 	{.ccode = "GU", .region = REGIONS_FCC},
 	{.ccode = "GY", .region = REGIONS_DEFAULT},
 	{.ccode = "HK", .region = REGIONS_ETSI},
@@ -306,7 +294,7 @@ reg_table reg_tables[] = {
 	{.ccode = "IL", .region = REGIONS_ETSI},
 	{.ccode = "IN", .region = REGIONS_ETSI},
 	{.ccode = "IQ", .region = REGIONS_ETSI},
-	{.ccode = "IR", .region = REGIONS_JP},
+	{.ccode = "IR", .region = REGIONS_ETSI},
 	{.ccode = "IS", .region = REGIONS_ETSI},
 	{.ccode = "IT", .region = REGIONS_ETSI},
 	{.ccode = "JM", .region = REGIONS_FCC},
@@ -316,7 +304,7 @@ reg_table reg_tables[] = {
 	{.ccode = "KH", .region = REGIONS_ETSI},
 	{.ccode = "KN", .region = REGIONS_ETSI},
 	{.ccode = "KP", .region = REGIONS_JP},
-	{.ccode = "KR", .region = REGIONS_ETSI},
+	{.ccode = "KR", .region = REGIONS_KCC},
 	{.ccode = "KW", .region = REGIONS_ETSI},
 	{.ccode = "KY", .region = REGIONS_FCC},
 	{.ccode = "KZ", .region = REGIONS_DEFAULT},
@@ -360,7 +348,7 @@ reg_table reg_tables[] = {
 	{.ccode = "PF", .region = REGIONS_ETSI},
 	{.ccode = "PG", .region = REGIONS_FCC},
 	{.ccode = "PH", .region = REGIONS_FCC},
-	{.ccode = "PK", .region = REGIONS_ETSI},
+	{.ccode = "PK", .region = REGIONS_DEFAULT},
 	{.ccode = "PL", .region = REGIONS_ETSI},
 	{.ccode = "PM", .region = REGIONS_ETSI},
 	{.ccode = "PR", .region = REGIONS_FCC},
@@ -382,7 +370,7 @@ reg_table reg_tables[] = {
 	{.ccode = "SN", .region = REGIONS_FCC},
 	{.ccode = "SR", .region = REGIONS_ETSI},
 	{.ccode = "SV", .region = REGIONS_FCC},
-	{.ccode = "SY", .region = REGIONS_DEFAULT},
+	{.ccode = "SY", .region = REGIONS_ETSI},
 	{.ccode = "TC", .region = REGIONS_FCC},
 	{.ccode = "TD", .region = REGIONS_ETSI},
 	{.ccode = "TG", .region = REGIONS_ETSI},
@@ -393,6 +381,7 @@ reg_table reg_tables[] = {
 	{.ccode = "TR", .region = REGIONS_ETSI},
 	{.ccode = "TT", .region = REGIONS_FCC},
 	{.ccode = "TW", .region = REGIONS_FCC},
+	{.ccode = "TZ", .region = REGIONS_ETSI},
 	{.ccode = "UA", .region = REGIONS_ETSI},
 	{.ccode = "UG", .region = REGIONS_FCC},
 	{.ccode = "UY", .region = REGIONS_FCC},
@@ -403,10 +392,13 @@ reg_table reg_tables[] = {
 	{.ccode = "VN", .region = REGIONS_JP},
 	{.ccode = "VU", .region = REGIONS_FCC},
 	{.ccode = "WF", .region = REGIONS_ETSI},
+	{.ccode = "WS", .region = REGIONS_ETSI},
 	{.ccode = "YE", .region = REGIONS_DEFAULT},
 	{.ccode = "YT", .region = REGIONS_ETSI},
 	{.ccode = "ZA", .region = REGIONS_ETSI},
 	{.ccode = "ZM", .region = REGIONS_ETSI},
+	{.ccode = "FO", .region = REGIONS_ETSI},
+	{.ccode = "FK", .region = REGIONS_ETSI},
 	{.ccode = "ZW", .region = REGIONS_ETSI},
 };
 
@@ -438,11 +430,14 @@ u8 get_region_index(char * name)
 		return REGIONS_ETSI;
 	else if (strncmp(name, "JP", 2) == 0)
 		return REGIONS_JP;
+	else if (strncmp(name, "KCC", 3) == 0)
+		return REGIONS_KCC;
 	else if (strncmp(name, "UNSET", 5) == 0)
 		return REGIONS_DEFAULT;
 
 	return REGIONS_DEFAULT;
 }
+
 
 
 #ifdef CONFIG_POWER_LIMIT
@@ -452,7 +447,7 @@ u8 get_region_index(char * name)
 
 #define MAX_2_4G_BW_NUM    2
 #define MAX_5G_BW_NUM      3
-#define MAX_REGION_NUM            5
+#define MAX_REGION_NUM     6
 
 typedef struct
 {
@@ -700,7 +695,7 @@ static int rwnx_load_firmware(u32 **fw_buf, const char *name, struct device *dev
     }
 
     /* start to read from firmware file */
-    buffer = kzalloc(size, GFP_KERNEL);
+    buffer = kzalloc(size + 1, GFP_KERNEL);
     if (!buffer) {
         *fw_buf = NULL;
         __putname(path);
@@ -715,6 +710,7 @@ static int rwnx_load_firmware(u32 **fw_buf, const char *name, struct device *dev
     rdlen = kernel_read(fp, fp->f_pos, buffer, size);
     #endif
 
+    *((char*)buffer + size) = 0;
     if (size != rdlen) {
         AICWFDBG(LOGERROR, "%s: %s file rdlen invalid %d\n", __func__, name, (int)rdlen);
         *fw_buf = NULL;
@@ -990,7 +986,44 @@ s8_l get_txpwr_max(s8_l power)
 {
 	int i=0;
 
-	if (g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80 || g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80X2){
+	if(g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80X2){
+		for (i = 0; i <= 11; i++){
+			if(power < userconfig_info.txpwr_lvl_v4.pwrlvl_11b_11ag_2g4[i])
+				power = userconfig_info.txpwr_lvl_v4.pwrlvl_11b_11ag_2g4[i];
+		}
+	    for (i = 0; i <= 9; i++){
+			if(power < userconfig_info.txpwr_lvl_v4.pwrlvl_11n_11ac_2g4[i])
+				power = userconfig_info.txpwr_lvl_v4.pwrlvl_11n_11ac_2g4[i];
+	    }
+	    for (i = 0; i <= 11; i++){
+			if(power < userconfig_info.txpwr_lvl_v4.pwrlvl_11ax_2g4[i])
+				power = userconfig_info.txpwr_lvl_v4.pwrlvl_11ax_2g4[i];
+	    }
+		for (i = 0; i <= 7; i++){
+			if(power < userconfig_info.txpwr_lvl_v4.pwrlvl_11a_5g[i])
+				power = userconfig_info.txpwr_lvl_v4.pwrlvl_11a_5g[i];
+		}
+	    for (i = 0; i <= 9; i++){
+			if(power < userconfig_info.txpwr_lvl_v4.pwrlvl_11n_11ac_5g[i])
+				power = userconfig_info.txpwr_lvl_v4.pwrlvl_11n_11ac_5g[i];
+	    }
+		for (i = 0; i <= 11; i++){
+			if(power < userconfig_info.txpwr_lvl_v4.pwrlvl_11ax_5g[i])
+				power = userconfig_info.txpwr_lvl_v4.pwrlvl_11ax_5g[i];
+		}
+
+		if ((userconfig_info.txpwr_loss.loss_enable_2g4 == 1) ||
+			(userconfig_info.txpwr_loss.loss_enable_5g == 1)) {
+		if (userconfig_info.txpwr_loss.loss_value_2g4 <
+			userconfig_info.txpwr_loss.loss_value_5g)
+			power += userconfig_info.txpwr_loss.loss_value_5g;
+		else
+			power += userconfig_info.txpwr_loss.loss_value_2g4;
+		}
+	}
+	else if (g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80 ||
+		g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80N ||
+		g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80WN){
 		for (i = 0; i <= 11; i++){
 			if(power < userconfig_info.txpwr_lvl_v3.pwrlvl_11b_11ag_2g4[i])
 				power = userconfig_info.txpwr_lvl_v3.pwrlvl_11b_11ag_2g4[i];
@@ -1040,6 +1073,7 @@ s8_l get_txpwr_max(s8_l power)
 	    }
 	}
 
+	printk("%s:txpwr_max:%d \r\n",__func__,power);
 	return power;
 }
 
@@ -1047,7 +1081,9 @@ s8_l get_txpwr_max(s8_l power)
 void set_txpwr_loss_ofst(s8_l value)
 {
 	int i=0;
-	if (g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80){
+	if (g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80 ||
+		g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80N ||
+		g_rwnx_plat->sdiodev->chipid == PRODUCT_ID_AIC8800D80WN){
 		for (i = 0; i <= 11; i++){
 			userconfig_info.txpwr_lvl_v3.pwrlvl_11b_11ag_2g4[i] += value;
 		}
@@ -1820,9 +1856,7 @@ void rwnx_plat_userconfig_parsing(struct rwnx_hw *rwnx_hw, char *buffer, int siz
 
 		// store value to data struct
 		for (i = 0; i < sizeof(parse_match_tab) / sizeof(parse_match_tab[0]); i++) {
-			snprintf(keyname, sizeof(keyname), "%s%s",
-				 parse_key_prefix[rwnx_hw->vendor_info],
-				 parse_match_tab[i].keyname);
+			sprintf(&keyname[0], "%s%s", parse_key_prefix[rwnx_hw->vendor_info], parse_match_tab[i].keyname);
 			if (parse_key_val(line, keyname, conf) == 0) {
 				err = kstrtol(conf, 0, &val);
 				*(unsigned long *)((unsigned long)&nvram_info + parse_match_tab[i].offset) = val;
@@ -2890,7 +2924,7 @@ int8_t rwnx_plat_powerlimit_save(u8_l band, char *channel, u8_l bw, char *limit,
 }
 
 
-void rwnx_plat_powerlimit_parsing(char *buffer, int size, char *cc)
+void rwnx_plat_powerlimit_parsing(char *buffer, int size)
 {
 #define LD_STAGE_EXC_MAPPING    0
 #define LD_STAGE_TAB_DEFINE     1
@@ -3242,6 +3276,12 @@ static int rwnx_plat_userconfig_load(struct rwnx_hw *rwnx_hw) {
 #ifdef CONFIG_POWER_LIMIT
 		rwnx_plat_powerlimit_load_8800d80(rwnx_hw);
 #endif
+	}else if(rwnx_hw->sdiodev->chipid == PRODUCT_ID_AIC8800D80N ||
+		rwnx_hw->sdiodev->chipid == PRODUCT_ID_AIC8800D80WN){
+		rwnx_plat_userconfig_load_8800d80n(rwnx_hw);
+#ifdef CONFIG_POWER_LIMIT
+		rwnx_plat_powerlimit_load_8800d80n(rwnx_hw);
+#endif
 	}else if(rwnx_hw->sdiodev->chipid == PRODUCT_ID_AIC8800D80X2){
 		rwnx_plat_userconfig_load_8800d80x2(rwnx_hw);
 #ifdef CONFIG_POWER_LIMIT
@@ -3303,8 +3343,6 @@ int rwnx_platform_on(struct rwnx_hw *rwnx_hw, void *config)
 			return ret;
 		}
 #endif
-
-
 	rwnx_plat_userconfig_load(rwnx_hw);
 
 	//rwnx_plat->enabled = true;
@@ -3427,4 +3465,5 @@ MODULE_FIRMWARE(RWNX_MAC_FW_NAME);
 #ifndef CONFIG_RWNX_TL4
 MODULE_FIRMWARE(RWNX_MAC_FW_NAME2);
 #endif
+
 

@@ -6,15 +6,6 @@ EXTRA_CFLAGS += -Wno-pointer-to-int-cast
 #EXTRA_CFLAGS += -Wno-maybe-uninitialized
 #EXTRA_CFLAGS += -Wno-unused-variable
 
-ccflags-y += -Wno-implicit-fallthrough
-ccflags-y += -Wno-unused-function
-ccflags-y += -Wno-unused-variable
-ccflags-y += -Wno-comment
-ccflags-y += -Wno-format
-ccflags-y += -Wno-declaration-after-statement
-ccflags-y += -Wno-misleading-indentation
-ccflags-y += -Wno-parentheses
-
 RWNX_VERS_NUM := 6.4.3.0
 
 CONFIG_COUNTRY_CODE = "00"
@@ -119,6 +110,11 @@ CONFIG_POWER_LIMIT = n
 CONFIG_FOR_IPCAM = n
 CONFIG_LOWPOWER = n
 CONFIG_NO_FIRMWARE_RELOAD =n
+CONFIG_BAND_STEERING = n
+CONFIG_PRBREQ_REPORT = n
+CONFIG_DYNAMIC_PERPWR = n
+CONFIG_CACHE_GUARD = y
+CONFIG_SUPPORT_4ADDR = n
 
 # Support of MU-MIMO transmission (need FW support)
 ifeq ($(CONFIG_RWNX_BFMER), y)
@@ -171,6 +167,8 @@ $(MODULE_NAME)-y := \
 	aicwf_rx_prealloc.o	\
 	aic_priv_cmd.o
 
+$(MODULE_NAME)-$(CONFIG_BAND_STEERING)    += aicwf_manager.o    \
+	aicwf_steering.o
 $(MODULE_NAME)-$(CONFIG_BR_SUPPORT)       += aic_br_ext.o
 $(MODULE_NAME)-$(CONFIG_RWNX_RADAR)       += rwnx_radar.o
 $(MODULE_NAME)-$(CONFIG_DEBUG_FS)         += rwnx_debugfs.o
@@ -269,6 +267,11 @@ ccflags-$(CONFIG_POWER_LIMIT) += -DCONFIG_POWER_LIMIT
 ccflags-$(CONFIG_FOR_IPCAM) += -DCONFIG_FOR_IPCAM
 ccflags-$(CONFIG_NO_FIRMWARE_RELOAD) += -DCONFIG_NO_FIRMWARE_RELOAD
 ccflags-$(CONFIG_LOWPOWER) += -DCONFIG_LOWPOWER
+ccflags-$(CONFIG_BAND_STEERING) += -DCONFIG_BAND_STEERING
+ccflags-$(CONFIG_PRBREQ_REPORT) += -DCONFIG_PRBREQ_REPORT
+ccflags-$(CONFIG_DYNAMIC_PERPWR) += -DCONFIG_DYNAMIC_PERPWR
+ccflags-$(CONFIG_CACHE_GUARD) += -DCONFIG_CACHE_GUARD
+ccflags-$(CONFIG_SUPPORT_4ADDR) += -DCONFIG_SUPPORT_4ADDR
 
 ifeq ($(CONFIG_SDIO_SUPPORT), y)
 ccflags-y += -DAICWF_SDIO_SUPPORT
@@ -320,8 +323,6 @@ CONFIG_PLATFORM_AMLOGIC ?= n
 CONFIG_PLATFORM_UBUNTU ?= y
 
 ccflags-y += -DAIC_TRACE_INCLUDE_PATH=$(src)
-
-MAKEFLAGS +=-j$(shell nproc)
 
 ifeq ($(CONFIG_PLATFORM_ROCKCHIP), y)
 #KDIR ?= /home/yaya/E/Rockchip/3229/Android7/RK3229_ANDROID7.1_v1.01_20170914/rk3229_Android7.1_v1.01_xml0914/kernel

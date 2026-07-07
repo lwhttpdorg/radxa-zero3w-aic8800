@@ -12,7 +12,6 @@
 #include "rwnx_tx.h"
 #include "rwnx_platform.h"
 #include "aicwf_debug.h"
-volatile struct txdesc_host *aicwf_sdio_host_txdesc_get(struct sdio_host_env_tag *env, const int queue_idx);
 
 /**
  ****************************************************************************************

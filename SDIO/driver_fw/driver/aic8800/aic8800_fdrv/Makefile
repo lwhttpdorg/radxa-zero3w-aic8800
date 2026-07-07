@@ -1,5 +1,8 @@
 EXTRA_CFLAGS += $(USER_EXTRA_CFLAGS)
 EXTRA_CFLAGS += -Wno-implicit-fallthrough
+EXTRA_CFLAGS += -Wno-error=missing-prototypes
+ccflags-y += -Wno-missing-prototypes
+ccflags-y += -Wno-missing-declarations
 #EXTRA_CFLAGS += -Wno-unused-function
 #EXTRA_CFLAGS += -Wno-maybe-uninitialized
 #EXTRA_CFLAGS += -Wno-unused-variable
@@ -89,6 +92,7 @@ CONFIG_PREALLOC_RX_SKB ?= n
 CONFIG_WIFI_SUSPEND_FOR_LINUX = n
 # Need to set fw path in BOARD_KERNEL_CMDLINE
 CONFIG_USE_FW_REQUEST ?= n
+CONFIG_WOWLAN = n
 CONFIG_USE_P2P0=n
 CONFIG_TX_NETIF_FLOWCTRL = n
 CONFIG_ONE_TXQ = n
@@ -115,14 +119,21 @@ CONFIG_SDIO_ADMA = n
 CONFIG_MCC = y
 CONFIG_APF = n
 CONFIG_POWER_LIMIT = n
+CONFIG_BAND_STEERING = n
+CONFIG_PRBREQ_REPORT = n
+CONFIG_SUPPORT_4ADDR = n
+CONFIG_DYNAMIC_PWR = n
 
 #CONFIG FOR LOW POWER MODE
-CONFIG_SDIO_PWRCTRL ?= y
+CONFIG_SDIO_PWRCTRL ?= n
 CONFIG_GPIO_WAKEUP ?= n
 CONFIG_AUTO_POWERSAVE = n
 
 # Enable wifi-hal Latency Mode
 CONFIG_AICWF_LATENCY_MODE = n
+
+#support D80X2 can write rf result to file
+CONFIG_WRITE_FILE_D80X2 = n
 
 ifneq ($(CONFIG_WIRELESS_EXT), y)
 CONFIG_USE_WIRELESS_EXT = n
@@ -188,6 +199,8 @@ $(MODULE_NAME)-y := \
 	aic_priv_cmd.o		\
 	aicwf_rx_prealloc.o
 
+$(MODULE_NAME)-$(CONFIG_BAND_STEERING)    += aicwf_manager.o    \
+	aicwf_steering.o
 $(MODULE_NAME)-$(CONFIG_BR_SUPPORT)       += aic_br_ext.o
 $(MODULE_NAME)-$(CONFIG_RWNX_RADAR)       += rwnx_radar.o
 $(MODULE_NAME)-$(CONFIG_DEBUG_FS)         += rwnx_debugfs.o
@@ -297,7 +310,12 @@ ccflags-$(CONFIG_MCC) += -DCONFIG_MCC
 ccflags-$(CONFIG_SHUTDOWN_CALLBACK) += -DCONFIG_SHUTDOWN_CALLBACK
 ccflags-$(CONFIG_FOR_IPCAM) += -DCONFIG_FOR_IPCAM
 ccflags-$(CONFIG_SDIO_ADMA) += -DCONFIG_SDIO_ADMA
-
+ccflags-$(CONFIG_BAND_STEERING) += -DCONFIG_BAND_STEERING
+ccflags-$(CONFIG_PRBREQ_REPORT) += -DCONFIG_PRBREQ_REPORT
+ccflags-$(CONFIG_SUPPORT_4ADDR) += -DCONFIG_SUPPORT_4ADDR
+ccflags-$(CONFIG_WRITE_FILE_D80X2) += -DRF_WRITE_FILE
+ccflags-$(CONFIG_WOWLAN) += -DCONFIG_WOWLAN
+ccflags-$(CONFIG_DYNAMIC_PWR) += -DCONFIG_DYNAMIC_PWR
 
 ifeq ($(CONFIG_SDIO_SUPPORT), y)
 ccflags-y += -DAICWF_SDIO_SUPPORT
@@ -341,7 +359,6 @@ ccflags-$(CONFIG_APF) += -DCONFIG_APF
 ccflags-$(CONFIG_AUTO_POWERSAVE) += -DCONFIG_AUTO_POWERSAVE
 
 ccflags-y += -DAIC_TRACE_INCLUDE_PATH=$(src)
-MAKEFLAGS +=-j$(shell nproc)
 
 ########## Platform support list ##########
 CONFIG_PLATFORM_ROCKCHIP ?= n
@@ -420,5 +437,3 @@ uninstall:
 
 clean:
 	rm -rf *.o *.ko *.o.* *.mod.* modules.* Module.* .a* .o* .*.o.* *.mod .tmp* .cache.mk
-
-

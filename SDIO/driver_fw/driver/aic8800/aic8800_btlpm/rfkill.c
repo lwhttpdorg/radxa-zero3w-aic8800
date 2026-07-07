@@ -20,11 +20,10 @@
 #include <linux/clk.h>
 #include <linux/version.h>
 #include "aic_bsp_export.h"
+#include "rfkill.h"
 
 static struct rfkill *bt_rfk;
 static const char bt_name[] = "bluetooth";
-int rfkill_bluetooth_init(struct platform_device *pdev);
-int rfkill_bluetooth_remove(struct platform_device *dev);
 
 static int bluetooth_set_power(void *data, bool blocked)
 {

@@ -27,6 +27,8 @@
 #define FULLMAC_PARAM(name, default) .name = default,
 #endif /* CONFIG_RWNX_FULLMAC */
 
+extern int reg_regdb_size;
+
 struct rwnx_mod_params rwnx_mod_params = {
     /* common parameters */
     COMMON_PARAM(ht_on, true, true)
@@ -53,6 +55,7 @@ struct rwnx_mod_params rwnx_mod_params = {
     COMMON_PARAM(mutx, true, true)
     COMMON_PARAM(mutx_on, true, true)
     COMMON_PARAM(use_80, true, true)
+/* false: use crda(iw reg set CN); true: drive self-management(wifi_test wlan0 country_set CN) */
     COMMON_PARAM(custregd, true, true)
     COMMON_PARAM(custchan, false, false)
     COMMON_PARAM(roc_dur_max, 500, 500)
@@ -355,7 +358,7 @@ struct ieee80211_regdomain *getRegdomainFromRwnxDB(struct wiphy *wiphy,
 
 	idx = 0;
 
-	while (reg_regdb[idx]){
+	while (reg_regdb[idx] && idx < reg_regdb_size){
 		if((reg_regdb[idx]->alpha2[0] == alpha2[0]) &&
 			(reg_regdb[idx]->alpha2[1] == alpha2[1])){
 			memcpy(country_code, alpha2, 2);
@@ -1782,6 +1785,8 @@ int rwnx_handle_dynparams(struct rwnx_hw *rwnx_hw, struct wiphy *wiphy)
     if(rwnx_hw->usbdev->chipid != PRODUCT_ID_AIC8800D81 &&
         rwnx_hw->usbdev->chipid != PRODUCT_ID_AIC8800D81X2 &&
         rwnx_hw->usbdev->chipid != PRODUCT_ID_AIC8800D89X2 &&
+        rwnx_hw->usbdev->chipid != PRODUCT_ID_AIC8800D80N &&
+        rwnx_hw->usbdev->chipid != PRODUCT_ID_AIC8800DLN &&
         rwnx_hw->mod_params->he_mcs_map > IEEE80211_HE_MCS_SUPPORT_0_9){
         rwnx_hw->mod_params->he_mcs_map = IEEE80211_HE_MCS_SUPPORT_0_9;
     } else {
@@ -1792,6 +1797,7 @@ int rwnx_handle_dynparams(struct rwnx_hw *rwnx_hw, struct wiphy *wiphy)
     if(rwnx_hw->usbdev->chipid != PRODUCT_ID_AIC8800D81 &&
         rwnx_hw->usbdev->chipid != PRODUCT_ID_AIC8800D81X2 &&
         rwnx_hw->usbdev->chipid != PRODUCT_ID_AIC8800D89X2 &&
+        rwnx_hw->usbdev->chipid != PRODUCT_ID_AIC8800D80N &&
         rwnx_hw->mod_params->use_80 == true){
         rwnx_hw->mod_params->use_80 = false;
     } else {
@@ -1836,32 +1842,35 @@ void rwnx_custregd(struct rwnx_hw *rwnx_hw, struct wiphy *wiphy)
 // For older kernel version, the custom regulatory is applied before the wiphy
 // registration (in rwnx_set_wiphy_params()), so nothing has to be done here
 
+	/* From kernel 6.5.0, this bit is removed and will be reused later */
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)) && (LINUX_VERSION_CODE < KERNEL_VERSION(6, 5, 0)) && (LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 39) || LINUX_VERSION_CODE > KERNEL_VERSION(6, 2, 0))
+	wiphy->regulatory_flags |= REGULATORY_IGNORE_STALE_KICKOFF;
+#endif
+	if (!rwnx_hw->mod_params->custregd)
+		return;
+
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4, 0, 0)
-    /* From kernel 6.5.0, this bit is removed and will be reused later */
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(6, 5, 0)) && (LINUX_VERSION_CODE < KERNEL_VERSION(6, 1, 39) || LINUX_VERSION_CODE > KERNEL_VERSION(6, 2, 0))
-    wiphy->regulatory_flags |= REGULATORY_IGNORE_STALE_KICKOFF;
-#endif /* LINUX_VERSION_CODE < KERNEL_VERSION(6, 5, 0) */
-    wiphy->regulatory_flags |= REGULATORY_WIPHY_SELF_MANAGED;
+	wiphy->regulatory_flags |= REGULATORY_WIPHY_SELF_MANAGED;
 
-    if (!rwnx_hw->mod_params->custregd)
-        return;
-
-    rtnl_lock();
+	rtnl_lock();
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 12, 0)
-    if (regulatory_set_wiphy_regd_sync(wiphy, getRegdomainFromRwnxDB(wiphy, default_ccode))){
-        wiphy_err(wiphy, "Failed to set custom regdomain\n");
-    }
+		if (regulatory_set_wiphy_regd_sync(wiphy, getRegdomainFromRwnxDB(wiphy, default_ccode))){
+			wiphy_err(wiphy, "Failed to set custom regdomain\n");
+		}
 #else
-    if (regulatory_set_wiphy_regd_sync_rtnl(wiphy, getRegdomainFromRwnxDB(wiphy, default_ccode))){
-        wiphy_err(wiphy, "Failed to set custom regdomain\n");
-    }
+		if (regulatory_set_wiphy_regd_sync_rtnl(wiphy, getRegdomainFromRwnxDB(wiphy, default_ccode))){
+			wiphy_err(wiphy, "Failed to set custom regdomain\n");
+		}
 #endif
-    else{
-        wiphy_err(wiphy,"\n"
-                  "*******************************************************\n"
-                  "** CAUTION: USING PERMISSIVE CUSTOM REGULATORY RULES **\n"
-                  "*******************************************************\n");
-    }
-     rtnl_unlock();
+
+	else{
+		wiphy_err(wiphy,"\n"
+				  "*******************************************************\n"
+				  "** CAUTION: USING PERMISSIVE CUSTOM REGULATORY RULES **\n"
+				  "*******************************************************\n");
+	}
+	 rtnl_unlock();
 #endif
+
 }
+

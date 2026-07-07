@@ -12,8 +12,7 @@
 #include "rwnx_defs.h"
 #include "ipc_host.h"
 #include "rwnx_prof.h"
-irqreturn_t rwnx_irq_hdlr(int irq, void *dev_id);
-void rwnx_task(unsigned long data);
+#include "rwnx_irqs.h"
 
 /**
  * rwnx_irq_hdlr - IRQ handler

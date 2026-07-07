@@ -24,8 +24,6 @@ static const struct pci_device_id rwnx_pci_ids[] = {
 	{PCI_DEVICE(PCI_VENDOR_ID_XILINX, PCI_DEVICE_ID_XILINX_CEVA_VIRTEX7)},
 	{0,}
 };
-int rwnx_pci_register_drv(void);
-void rwnx_pci_unregister_drv(void);
 
 
 /* Uncomment this for depmod to create module alias */
