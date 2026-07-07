@@ -535,7 +535,7 @@ static const int rwnx_hwq2uapsd[NL80211_NUM_ACS] = {
 
 
 extern uint8_t scanning;
-int aicwf_dbg_level = LOGERROR|LOGINFO|LOGDEBUG|LOGTRACE|LOGFW;
+int aicwf_dbg_level = LOGERROR;
 module_param(aicwf_dbg_level, int, 0660);
 #ifdef CONFIG_DYNAMIC_PWR
 int dynamic_pwr = 1;
@@ -1257,7 +1257,7 @@ static int rwnx_close(struct net_device *dev)
 	}
 #endif
 
-	netdev_info(dev, "CLOSE");
+	AICWFDBG(LOGINFO, "%s: CLOSE\n", dev->name);
 
 	rwnx_radar_cancel_cac(&rwnx_hw->radar);
 
@@ -1832,7 +1832,7 @@ static struct wireless_dev *rwnx_virtual_interface_add(struct rwnx_hw *rwnx_hw,
 	int vif_idx = -1;
 	int i;
 
-	printk("rwnx_virtual_interface_add: %d, %s\n", type, name);
+	AICWFDBG(LOGDEBUG, "rwnx_virtual_interface_add: %d, %s\n", type, name);
 
 	if (type == NL80211_IFTYPE_AP_VLAN) {
 		min_idx = NX_VIRT_DEV_MAX;
@@ -1863,7 +1863,8 @@ static struct wireless_dev *rwnx_virtual_interface_add(struct rwnx_hw *rwnx_hw,
 	wdev->wiphy = rwnx_hw->wiphy;
 	wdev->iftype = type;
 
-	printk("rwnx_virtual_interface_add, ifname=%s, wdev=%p, vif_idx=%d\n", name, wdev, vif_idx);
+	AICWFDBG(LOGDEBUG, "rwnx_virtual_interface_add, ifname=%s, wdev=%p, vif_idx=%d\n",
+		 name, wdev, vif_idx);
 
 	#ifndef CONFIG_USE_P2P0
 	vif->is_p2p_vif = 1;
@@ -1899,8 +1900,9 @@ static struct wireless_dev *rwnx_virtual_interface_add(struct rwnx_hw *rwnx_hw,
 	memcpy(vif->wdev.address, rwnx_hw->wiphy->perm_addr, ETH_ALEN);
 	vif->wdev.address[0] |= 0x02;
 	vif->wdev.address[0] ^= (vif_idx << 2);
-	printk("p2p dev addr=%x %x %x %x %x %x\n", vif->wdev.address[0], vif->wdev.address[1], \
-		vif->wdev.address[2], vif->wdev.address[3], vif->wdev.address[4], vif->wdev.address[5]);
+	AICWFDBG(LOGDEBUG, "p2p dev addr=%x %x %x %x %x %x\n", vif->wdev.address[0],
+		 vif->wdev.address[1], vif->wdev.address[2], vif->wdev.address[3],
+		 vif->wdev.address[4], vif->wdev.address[5]);
 
 	return wdev;
 }
@@ -2178,7 +2180,7 @@ static int rwnx_cfgp2p_start_p2p_device(struct wiphy *wiphy, struct wireless_dev
 	int ret = 0;
 
 	//do nothing
-	printk("P2P interface started\n");
+	AICWFDBG(LOGINFO, "P2P interface started\n");
 
 	return ret;
 }
@@ -5567,7 +5569,7 @@ static void rwnx_reg_notifier(struct wiphy *wiphy,
 	ktime_t now;
 	enum nl80211_reg_initiator initiator = request->initiator;
 
-	printk("%s Enter\r\n", __func__);
+	AICWFDBG(LOGINFO, "%s Enter\r\n", __func__);
 
 	delta_min = 100;
 	now = ktime_get();

@@ -15,7 +15,7 @@
 #define DRV_AUTHOR            "AICSemi"
 #define DRV_VERS_MOD          "1.0"
 
-int aicwf_dbg_level_bsp = LOGERROR|LOGINFO|LOGDEBUG|LOGTRACE;
+int aicwf_dbg_level_bsp = LOGERROR;
 
 struct semaphore aicbsp_probe_semaphore;
 
@@ -412,8 +412,8 @@ module_param(adap_test, int, 0660);
 static int __init aicbsp_init(void)
 {
 	int ret;
-	printk("%s\n", __func__);
-	printk("RELEASE_DATE:%s\r\n", RELEASE_DATE);
+	AICWFDBG(LOGINFO, "%s\n", __func__);
+	AICWFDBG(LOGINFO, "RELEASE_DATE:%s\r\n", RELEASE_DATE);
 
 	aicbsp_info.cpmode = testmode;
 

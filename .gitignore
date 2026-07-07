@@ -1,2 +1,19 @@
 # Build output (MO= directory)
 build/
+
+# Linux external module build output
+*.ko
+*.o
+*.o.*
+*.mod
+*.mod.c
+*.mod.o
+*.symtypes
+*.order
+*.cmd
+*.d
+.tmp_versions/
+.cache.mk
+Module.symvers
+modules.order
+built-in.a

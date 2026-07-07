@@ -498,7 +498,7 @@ int rwnx_load_firmware(u32 **fw_buf, const char *name, struct device *device)
 	int size = 0;
 	int ret = 0;
 
-	printk("%s: request firmware = %s \n", __func__ ,name);
+	AICWFDBG(LOGINFO, "%s: request firmware = %s\n", __func__, name);
 
 
 	ret = request_firmware(&fw, name, NULL);
@@ -528,7 +528,7 @@ int rwnx_load_firmware(u32 **fw_buf, const char *name, struct device *device)
 	MD5Init(&md5);
 	MD5Update(&md5, (unsigned char *)buffer, size);
 	MD5Final(&md5, decrypt);
-	printk(MD5PINRT, MD5(decrypt));
+	AICWFDBG(LOGINFO, MD5PINRT, MD5(decrypt));
 
 	release_firmware(fw);
 
@@ -545,11 +545,11 @@ int rwnx_load_firmware(u32 **fw_buf, const char *name, struct device *device)
 
 	#ifdef CONFIG_FIRMWARE_ARRAY
 		size = aicwf_get_firmware_array((char*)name, fw_buf);
-		printk("%s size:%d \r\n", __func__, size);
+		AICWFDBG(LOGINFO, "%s size:%d\r\n", __func__, size);
 		MD5Init(&md5);
 		MD5Update(&md5, (unsigned char *)*fw_buf, size);
 		MD5Final(&md5, decrypt);
-		printk(MD5PINRT, MD5(decrypt));
+		AICWFDBG(LOGINFO, MD5PINRT, MD5(decrypt));
 
 		return size;
 	#endif
@@ -573,7 +573,7 @@ int rwnx_load_firmware(u32 **fw_buf, const char *name, struct device *device)
 		return -1;
 	}
 
-	printk("%s :firmware path = %s  \n", __func__, path);
+	AICWFDBG(LOGINFO, "%s :firmware path = %s\n", __func__, path);
 
 	/* open the firmware file */
 	fp = filp_open(path, O_RDONLY, 0);
@@ -661,7 +661,7 @@ int rwnx_load_firmware(u32 **fw_buf, const char *name, struct device *device)
 	MD5Update(&md5, (unsigned char *)buffer, size);
 	MD5Final(&md5, decrypt);
 
-	printk(MD5PINRT, MD5(decrypt));
+	AICWFDBG(LOGINFO, MD5PINRT, MD5(decrypt));
 
 	return size;
 #endif
@@ -1282,7 +1282,7 @@ int rwnx_plat_bin_fw_upload_android(struct aic_sdio_dev *sdiodev, u32 fw_addr,
 	u32 *dst = NULL;
 	int err = 0;
 
-	printk("%s\n",__func__);
+	AICWFDBG(LOGINFO, "%s\n", __func__);
 
 	/* load aic firmware */
 	size = rwnx_load_firmware(&dst, filename, dev);
@@ -1656,15 +1656,15 @@ int aicbt_patch_table_load(struct aic_sdio_dev *sdiodev, struct aicbt_patch_tabl
     		*(data + 15) = (aicbsp_info.cpmode == AICBSP_CPMODE_WORK?aicbt_info[sdiodev->chipid].lpm_enable:0);
     		*(data + 17) = aicbt_info[sdiodev->chipid].txpwr_lvl;
 
-            printk("%s bt btmode[%d]:%d \r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].btmode);
-    		printk("%s bt uart_baud[%d]:%d \r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].uart_baud);
-    		printk("%s bt uart_flowctrl[%d]:%d \r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].uart_flowctrl);
-    		printk("%s bt lpm_enable[%d]:%d \r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].lpm_enable);
-    		printk("%s bt tx_pwr[%d]:%d \r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].txpwr_lvl);
+            AICWFDBG(LOGINFO, "%s bt btmode[%d]:%d\r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].btmode);
+    		AICWFDBG(LOGINFO, "%s bt uart_baud[%d]:%d\r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].uart_baud);
+    		AICWFDBG(LOGINFO, "%s bt uart_flowctrl[%d]:%d\r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].uart_flowctrl);
+    		AICWFDBG(LOGINFO, "%s bt lpm_enable[%d]:%d\r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].lpm_enable);
+    		AICWFDBG(LOGINFO, "%s bt tx_pwr[%d]:%d\r\n", __func__, sdiodev->chipid, aicbt_info[sdiodev->chipid].txpwr_lvl);
     	}
 
     	if (AICBT_PT_VER == p->type) {
-    		printk("aicbsp: bt patch version: %s\n", (char *)p->data);
+    		AICWFDBG(LOGINFO, "aicbsp: bt patch version: %s\n", (char *)p->data);
     		continue;
     	}
 
@@ -2254,7 +2254,7 @@ static struct skb_buff_pool resv_skb[] = {
 int aicbsp_resv_mem_init(void)
 {
     int i = 0;
-	printk("%s \n",__func__);
+	AICWFDBG(LOGINFO, "%s\n", __func__);
     for (i = 0; i < sizeof(resv_skb) / sizeof(resv_skb[0]); i++) {
             resv_skb[i].skb = dev_alloc_skb(resv_skb[i].size);
     }
@@ -2264,7 +2264,7 @@ int aicbsp_resv_mem_init(void)
 int aicbsp_resv_mem_deinit(void)
 {
     int i = 0;
-	printk("%s \n",__func__);
+	AICWFDBG(LOGINFO, "%s\n", __func__);
     for (i = 0; i < sizeof(resv_skb) / sizeof(resv_skb[0]); i++) {
             if (resv_skb[i].used == 0 && resv_skb[i].skb)
                     dev_kfree_skb(resv_skb[i].skb);
@@ -2293,8 +2293,8 @@ struct sk_buff *aicbsp_resv_mem_alloc_skb(unsigned int length, uint32_t id)
             }
     }
 
-    printk("aicbsp: %s, alloc %s succuss, id: %d, size: %d\n", __func__,
-                    resv_skb[id].name, resv_skb[id].id, resv_skb[id].size);
+    AICWFDBG(LOGINFO, "aicbsp: %s, alloc %s succuss, id: %d, size: %d\n", __func__,
+             resv_skb[id].name, resv_skb[id].id, resv_skb[id].size);
 
     resv_skb[id].used = 1;
 	return resv_skb[id].skb;

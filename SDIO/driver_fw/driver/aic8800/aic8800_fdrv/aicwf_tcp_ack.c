@@ -1,6 +1,7 @@
 #include"aicwf_tcp_ack.h"
 //#include"rwnx_tx.h"
 //#include "aicwf_tcp_ack.h"
+#include "aicwf_debug.h"
 #include"rwnx_defs.h"
 extern int intf_tx(struct rwnx_hw *priv,struct msg_buf *msg);
 struct msg_buf *intf_tcp_alloc_msg(struct msg_buf *msg)
@@ -66,7 +67,7 @@ void tcp_ack_init(struct rwnx_hw *priv)
 	struct tcp_ack_info *ack_info;
 	struct tcp_ack_manage *ack_m = &priv->ack_m;
 
-	printk("%s \n",__func__);
+	AICWFDBG(LOGINFO, "%s\n", __func__);
 	memset(ack_m, 0, sizeof(struct tcp_ack_manage));
 	ack_m->priv = priv;
 	spin_lock_init(&ack_m->lock);
@@ -643,4 +644,3 @@ void move_tcpack_msg(struct rwnx_hw *priv,
 		write_sequnlock_bh(&ack_info->seqlock);
 	}
 }
-

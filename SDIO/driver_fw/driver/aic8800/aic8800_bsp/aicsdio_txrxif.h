@@ -29,20 +29,21 @@
 #define DEBUG_INFO_LEVEL            2
 
 #define DBG_LEVEL                   DEBUG_DEBUG_LEVEL
+extern int aicwf_dbg_level_bsp;
 
 #define txrx_err(fmt, ...)          pr_err("aicbsp: txrx_err:<%s,%d>: " fmt, __func__, __LINE__, ##__VA_ARGS__)
 #define sdio_err(fmt, ...)          pr_err("aicbsp: sdio_err:<%s,%d>: " fmt, __func__, __LINE__, ##__VA_ARGS__)
 #define usb_err(fmt, ...)           pr_err("aicbsp: usb_err:<%s,%d>: " fmt, __func__, __LINE__, ##__VA_ARGS__)
 #if DBG_LEVEL >= DEBUG_DEBUG_LEVEL
-#define sdio_dbg(fmt, ...)          printk("aicbsp: " fmt, ##__VA_ARGS__)
-#define usb_dbg(fmt, ...)           printk("aicbsp: " fmt, ##__VA_ARGS__)
+#define sdio_dbg(fmt, ...)          do { if (aicwf_dbg_level_bsp & 0x0008) printk("aicbsp: " fmt, ##__VA_ARGS__); } while (0)
+#define usb_dbg(fmt, ...)           do { if (aicwf_dbg_level_bsp & 0x0008) printk("aicbsp: " fmt, ##__VA_ARGS__); } while (0)
 #else
 #define sdio_dbg(fmt, ...)
 #define usb_dbg(fmt, ...)
 #endif
 #if DBG_LEVEL >= DEBUG_INFO_LEVEL
-#define sdio_info(fmt, ...)         printk("aicbsp: " fmt, ##__VA_ARGS__)
-#define usb_info(fmt, ...)          printk("aicbsp: " fmt, ##__VA_ARGS__)
+#define sdio_info(fmt, ...)         do { if (aicwf_dbg_level_bsp & 0x0002) printk("aicbsp: " fmt, ##__VA_ARGS__); } while (0)
+#define usb_info(fmt, ...)          do { if (aicwf_dbg_level_bsp & 0x0002) printk("aicbsp: " fmt, ##__VA_ARGS__); } while (0)
 #else
 #define sdio_info(fmt, ...)
 #define usb_info(fmt, ...)

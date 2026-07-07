@@ -3,6 +3,7 @@
 #include <linux/module.h>
 #include <linux/netdevice.h>
 #include <linux/skbuff.h>
+#include "aicwf_debug.h"
 #include "aicwf_rx_prealloc.h"
 
 #ifdef CONFIG_PREALLOC_RX_SKB
@@ -54,7 +55,7 @@ int aicwf_prealloc_init()
     struct rx_buff *rxbuff;
     int i = 0;
 
-    printk("%s enter\n", __func__);
+    AICWFDBG(LOGINFO, "%s enter\n", __func__);
     INIT_LIST_HEAD(&aic_rx_buff_list.rxbuff_list);
     
 	for (i = 0 ; i < aic_rxbuff_num_max ; i++) {
@@ -75,7 +76,7 @@ int aicwf_prealloc_init()
         }
     }
 
-	printk("pre alloc rxbuff list len: %d\n", (int)atomic_read(&aic_rx_buff_list.rxbuff_list_len));
+	AICWFDBG(LOGINFO, "pre alloc rxbuff list len: %d\n", (int)atomic_read(&aic_rx_buff_list.rxbuff_list_len));
     return 0;
 }
 
@@ -94,4 +95,3 @@ void aicwf_prealloc_exit()
     }
 }
 #endif
-
