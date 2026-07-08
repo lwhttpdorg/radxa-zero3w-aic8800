@@ -50,8 +50,6 @@ static const u32 mv_cfg_fpga_dma_ctrl_regs[] = {
 	CFPGA_DMA1_CTRL_REG,
 	CFPGA_DMA2_CTRL_REG
 };
-int rwnx_cfpga_irq_enable(struct rwnx_hw *rwnx_hw);
-int rwnx_cfpga_irq_disable(struct rwnx_hw *rwnx_hw);
 
 /* This also clears running transactions */
 static void dini_dma_on(struct rwnx_dini *rwnx_dini)

@@ -15,11 +15,6 @@ int rwnx_request_firmware_common(struct rwnx_hw *rwnx_hw,
 void rwnx_plat_userconfig_parsing2(char *buffer, int size);
 
 void rwnx_release_firmware_common(u32** buffer);
-int aicwf_fdrv_dpd_result_apply_8800dc(struct rwnx_hw *rwnx_hw, rf_misc_ram_lite_t *dpd_res);
-int aicwf_fdrv_misc_ram_init_8800dc(struct rwnx_hw *rwnx_hw);
-int aicwf_set_rf_config_8800dc(struct rwnx_hw *rwnx_hw, struct mm_set_rf_calib_cfm *cfm);
-int rwnx_plat_userconfig_load_8800dc(struct rwnx_hw *rwnx_hw);
-int rwnx_plat_userconfig_load_8800dw(struct rwnx_hw *rwnx_hw);
 
 #if !defined(CONFIG_EXT_FEM_8800DCDW)
 u32 wifi_txgain_table_24g_8800dcdw[32] =

@@ -29,7 +29,6 @@
 #include "aic_bsp_export.h"
 
 #ifdef CONFIG_PREALLOC_RX_SKB
-struct rx_buff *rxbuff_queue_penq(struct rx_frame_queue *pq, struct rx_buff *p);
 void aicwf_rxframe_queue_init_2(struct rx_frame_queue *pq, int max_len)
 {
     //int prio;

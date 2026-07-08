@@ -14,6 +14,7 @@
 #include <linux/if_ether.h>
 #include <linux/ieee80211.h>
 #include <linux/semaphore.h>
+#include <linux/vmalloc.h>
 #include "aic_bsp_driver.h"
 
 #define AICBSP_SDIO_NAME                "aicbsp_sdio"
@@ -70,6 +71,8 @@ enum AICWF_IC{
 	PRODUCT_ID_AIC8800DC,
 	PRODUCT_ID_AIC8800DW,
 	PRODUCT_ID_AIC8800D80,
+	PRODUCT_ID_AIC8800D80N,
+	PRODUCT_ID_AIC8800D80WN,
 	PRODUCT_ID_AIC8800D80X2
 };
 
