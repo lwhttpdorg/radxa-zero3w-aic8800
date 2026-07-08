@@ -74,6 +74,7 @@ struct tcp_ack_manage {
 };
 
 struct msg_buf *intf_tcp_alloc_msg(struct msg_buf *msg);
+int intf_tx(struct rwnx_hw *priv, struct msg_buf *msg);
 
 void tcp_ack_init(struct rwnx_hw *priv);
 

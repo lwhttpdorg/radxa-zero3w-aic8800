@@ -118,7 +118,14 @@ struct aic_sdio_dev {
 };
 
 void *aicbsp_get_drvdata(void *args);
+bool aicbsp_get_load_fw_in_fdrv(void);
+int aicwf_sdio_readb(struct aic_sdio_dev *sdiodev, uint regaddr, u8 *val);
+int aicwf_sdio_readb_func2(struct aic_sdio_dev *sdiodev, uint regaddr, u8 *val);
 int aicwf_sdio_writeb(struct aic_sdio_dev *sdiodev, uint regaddr, u8 val);
+int aicwf_sdio_writeb_func2(struct aic_sdio_dev *sdiodev, uint regaddr, u8 val);
+int aicwf_sdio_send_msg(struct aic_sdio_dev *sdiodev, u8 *buf, uint count);
+struct sk_buff *aicwf_sdio_readframes(struct aic_sdio_dev *sdiodev, u8 msg);
+void aicwf_sdio_release_func2(struct aic_sdio_dev *sdiodev);
 void aicwf_sdio_hal_irqhandler(struct sdio_func *func);
 void aicwf_sdio_hal_irqhandler_func2(struct sdio_func *func);
 #if defined(CONFIG_SDIO_PWRCTRL)
@@ -147,6 +154,12 @@ void aicwf_sdio_aggrbuf_reset(struct aicwf_tx_priv *tx_priv);
 extern void aicwf_hostif_ready(void);
 int aicwf_process_rxframes(struct aicwf_rx_priv *rx_priv);
 uint8_t crc8_ponl_107(uint8_t *p_buffer, uint16_t cal_size);
+void get_fw_path(char *fw_path);
+int get_testmode(void);
+struct sdio_func *get_sdio_func(void);
+void set_irq_handler(void *fn);
+int get_adap_test(void);
+bool get_fdrv_no_reg_sdio(void);
 #endif /* AICWF_SDIO_SUPPORT */
 
 #endif /*_AICWF_SDMMC_H_*/

@@ -103,7 +103,7 @@ void rwnx_data_dump(char* tag, void* data, unsigned long len){
 }
 #endif
 
-int aicwf_sdio_readb(struct aic_sdio_dev *sdiodev, uint regaddr, u8 *val)
+static int aicwf_sdio_readb(struct aic_sdio_dev *sdiodev, uint regaddr, u8 *val)
 {
 	int ret;
 	sdio_claim_host(sdiodev->func);
@@ -904,7 +904,7 @@ fail:
 	return err;
 }
 
-void aicwf_sdio_probe_(struct sdio_func *func,
+static void aicwf_sdio_probe_(struct sdio_func *func,
 	const struct sdio_device_id *id){
     aicwf_sdio_probe(func, NULL);
 }
@@ -942,7 +942,7 @@ static void aicwf_sdio_remove(struct sdio_func *func)
 	AICWFDBG(LOGINFO, "%s done\n", __func__);
 }
 
-void aicwf_sdio_remove_(struct sdio_func *func){
+static void aicwf_sdio_remove_(struct sdio_func *func){
     aicwf_sdio_remove(func);
 }
 
@@ -1223,8 +1223,8 @@ extern void mmc_release_host(struct mmc_host *host);
 
 #if 1//def CONFIG_FDRV_NO_REG_SDIO
 extern struct sdio_func *get_sdio_func(void);
-void aicwf_sdio_probe_(struct sdio_func *func, const struct sdio_device_id *id);
-void aicwf_sdio_remove_(struct sdio_func *func);
+static void aicwf_sdio_probe_(struct sdio_func *func, const struct sdio_device_id *id);
+static void aicwf_sdio_remove_(struct sdio_func *func);
 #endif
 
 void aicwf_sdio_register(void)
@@ -1788,7 +1788,7 @@ static void aicwf_sdio_bus_stop(struct device *dev)
 }
 
 #ifdef CONFIG_PREALLOC_RX_SKB
-struct rx_buff *aicwf_sdio_readframes(struct aic_sdio_dev *sdiodev)
+static struct rx_buff *aicwf_sdio_readframes(struct aic_sdio_dev *sdiodev)
 {
 	int ret = 0;
 	u32 size = 0;
@@ -1821,7 +1821,7 @@ struct rx_buff *aicwf_sdio_readframes(struct aic_sdio_dev *sdiodev)
 	return rxbuff;
 }
 #else
-struct sk_buff *aicwf_sdio_readframes(struct aic_sdio_dev *sdiodev)
+static struct sk_buff *aicwf_sdio_readframes(struct aic_sdio_dev *sdiodev)
 {
 	int ret = 0;
 	u32 size = 0;

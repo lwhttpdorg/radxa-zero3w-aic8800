@@ -2,19 +2,12 @@
 #include "rwnx_msg_tx.h"
 #include "reg_access.h"
 #include "aic_bsp_export.h"
+#include "aicwf_compat_8800dc.h"
 
 #define RWNX_MAC_RF_PATCH_BASE_NAME_8800DC     "fmacfw_rf_patch_8800dc"
 #define RWNX_MAC_RF_PATCH_NAME_8800DC RWNX_MAC_RF_PATCH_BASE_NAME_8800DC".bin"
 #define FW_USERCONFIG_NAME_8800DC         "aic_userconfig_8800dc.txt"
 #define FW_USERCONFIG_NAME_8800DW         "aic_userconfig_8800dw.txt"
-
-int rwnx_plat_bin_fw_upload_2(struct rwnx_hw *rwnx_hw, u32 fw_addr,
-                               char *filename);
-int rwnx_request_firmware_common(struct rwnx_hw *rwnx_hw,
-	u32** buffer, const char *filename);
-void rwnx_plat_userconfig_parsing2(char *buffer, int size);
-
-void rwnx_release_firmware_common(u32** buffer);
 
 #if !defined(CONFIG_EXT_FEM_8800DCDW)
 u32 wifi_txgain_table_24g_8800dcdw[32] =

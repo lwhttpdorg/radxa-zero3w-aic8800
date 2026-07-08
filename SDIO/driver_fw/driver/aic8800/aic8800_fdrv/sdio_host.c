@@ -32,7 +32,7 @@ void aicwf_sdio_host_init(struct sdio_host_env_tag *env,
 /**
  ****************************************************************************************
  */
-volatile struct txdesc_host *aicwf_sdio_host_txdesc_get(struct sdio_host_env_tag *env, const int queue_idx)
+static __maybe_unused volatile struct txdesc_host *aicwf_sdio_host_txdesc_get(struct sdio_host_env_tag *env, const int queue_idx)
 {
 	// struct ipc_shared_env_tag *shared_env_ptr = env->shared;
 	volatile struct txdesc_host *txdesc_free = NULL;

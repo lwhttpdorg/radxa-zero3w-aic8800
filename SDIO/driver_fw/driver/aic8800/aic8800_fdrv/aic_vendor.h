@@ -3,6 +3,8 @@
 
 #include <linux/types.h>
 
+struct wiphy;
+
 #define GOOGLE_OUI     0x001A11
 #define BRCM_OUI       0x001018
 
@@ -92,6 +94,8 @@ enum debug_sub_command {
 	LOGGER_HAL_STOP,
 	LOGGER_SET_HAL_PID,
 };
+
+int aicwf_vendor_init(struct wiphy *wiphy);
 
 enum logger_attributes {
 	LOGGER_ATTRIBUTE_INVALID = 0,

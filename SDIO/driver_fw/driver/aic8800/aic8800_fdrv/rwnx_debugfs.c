@@ -2518,7 +2518,7 @@ error:
 			"Error while (un)registering debug entry for sta %d\n", sta_idx);
 }
 
-void _rwnx_dbgfs_rc_stat_write(struct rwnx_debugfs *rwnx_debugfs, uint8_t sta_idx)
+static void _rwnx_dbgfs_rc_stat_write(struct rwnx_debugfs *rwnx_debugfs, uint8_t sta_idx)
 {
 	uint8_t widx = rwnx_debugfs->rc_write;
 	if (rwnx_debugfs->rc_sta[widx] != 0XFF) {

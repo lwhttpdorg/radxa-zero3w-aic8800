@@ -118,6 +118,9 @@ struct rwnx_cmd_mgr {
 
 void rwnx_cmd_mgr_init(struct rwnx_cmd_mgr *cmd_mgr);
 void rwnx_cmd_mgr_deinit(struct rwnx_cmd_mgr *cmd_mgr);
+void rwnx_cmd_free(struct rwnx_cmd *cmd);
+int rwnx_init_cmd_array(void);
+void rwnx_free_cmd_array(void);
 int cmd_mgr_queue_force_defer(struct rwnx_cmd_mgr *cmd_mgr, struct rwnx_cmd *cmd);
 void aicwf_set_cmd_tx(void *dev, struct lmac_msg *msg, uint len);
 

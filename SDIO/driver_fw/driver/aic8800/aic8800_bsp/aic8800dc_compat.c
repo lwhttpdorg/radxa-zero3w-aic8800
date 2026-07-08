@@ -1917,7 +1917,7 @@ static u8 chip_id = 0;
 #define IS_CHIP_ID_H()  ((chip_id & CHIP_ID_H_MASK) == CHIP_ID_H_MASK)
 
 //Crystal provided by CPU (start)
-int set_bbpll_config(struct aic_sdio_dev *rwnx_hw){
+static int set_bbpll_config(struct aic_sdio_dev *rwnx_hw){
 //    {0x40505010, 0x7C301010},//bbpll
 	int ret = 0;
 	struct dbg_mem_read_cfm rd_mem_addr_cfm;

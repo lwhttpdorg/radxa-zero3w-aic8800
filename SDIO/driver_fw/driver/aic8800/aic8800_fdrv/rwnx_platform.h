@@ -124,6 +124,23 @@ void rwnx_platform_off(struct rwnx_hw *rwnx_hw, void **config);
 
 int rwnx_platform_register_drv(void);
 void rwnx_platform_unregister_drv(void);
+int rwnx_request_firmware_common(struct rwnx_hw *rwnx_hw, u32 **buffer,
+				 const char *filename);
+void rwnx_release_firmware_common(u32 **buffer);
+int rwnx_plat_bin_fw_upload_2(struct rwnx_hw *rwnx_hw, u32 fw_addr,
+			      char *filename);
+int rwnx_plat_userconfig_upload_android(struct rwnx_hw *rwnx_hw,
+					char *fw_path, char *filename);
+int rwnx_atoi2(char *value, int c_len);
+int rwnx_atoi(char *value);
+void rwnx_plat_nvram_set_value(char *command, char *value);
+void rwnx_plat_nvram_set_value_v3(char *command, char *value);
+void rwnx_plat_nvram_set_value_8800d80x2(char *command, char *value);
+void rwnx_plat_userconfig_parsing(struct rwnx_hw *rwnx_hw, char *buffer,
+				  int size);
+void rwnx_plat_userconfig_parsing2(char *buffer, int size);
+void rwnx_plat_userconfig_parsing3(char *buffer, int size);
+void rwnx_plat_userconfig_parsing_8800d80x2(char *buffer, int size);
 
 void get_userconfig_txpwr_idx(txpwr_idx_conf_t *txpwr_idx);
 void get_userconfig_txpwr_ofst(txpwr_ofst_conf_t *txpwr_ofst);

@@ -44,7 +44,7 @@ extern int testmode;
 extern u8 chip_sub_id;
 extern u8 chip_mcu_id;
 
-int rwnx_plat_bin_fw_upload_2_with_version(struct aic_sdio_dev *rwnx_hw, u32 fw_addr,
+static int rwnx_plat_bin_fw_upload_2_with_version(struct aic_sdio_dev *rwnx_hw, u32 fw_addr,
                                char *filename, char *version_str, int version_size)
 {
     int err = 0;

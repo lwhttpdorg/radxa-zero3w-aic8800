@@ -53,6 +53,9 @@
 #include "aicwf_steering.h"
 #endif
 
+int rwnx_cfg80211_set_monitor_channel_(struct wiphy *wiphy,
+				       struct cfg80211_chan_def *chandef);
+
 
 #define WPI_HDR_LEN    18
 #define WPI_PN_LEN     16

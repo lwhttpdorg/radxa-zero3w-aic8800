@@ -338,6 +338,7 @@ static inline bool rwnx_txq_is_scheduled(struct rwnx_txq *txq)
 struct rwnx_txq *rwnx_txq_sta_get(struct rwnx_sta *sta, u8 tid,
 								  struct rwnx_hw *rwnx_hw);
 struct rwnx_txq *rwnx_txq_vif_get(struct rwnx_vif *vif, u8 type);
+void rwnx_txq_flush(struct rwnx_hw *rwnx_hw, struct rwnx_txq *txq);
 #endif /* CONFIG_RWNX_FULLMAC */
 
 /**

@@ -1323,7 +1323,7 @@ int rwnx_plat_bin_fw_upload_android(struct aic_sdio_dev *sdiodev, u32 fw_addr,
 	return err;
 }
 
-int aicbt_patch_table_free(struct aicbt_patch_table **head)
+static int aicbt_patch_table_free(struct aicbt_patch_table **head)
 {
 	struct aicbt_patch_table *p = *head, *n = NULL;
 	while (p) {
@@ -1337,7 +1337,7 @@ int aicbt_patch_table_free(struct aicbt_patch_table **head)
 	return 0;
 }
 
-struct aicbt_patch_table *aicbt_patch_table_alloc(const char *filename)
+static struct aicbt_patch_table *aicbt_patch_table_alloc(const char *filename)
 {
 	uint8_t *rawdata = NULL, *p;
 	int size;
@@ -1401,7 +1401,7 @@ err:
 		vfree(rawdata);
 	return NULL;
 }
-int aicbt_patch_info_unpack(struct aicbt_patch_info_t *patch_info, struct aicbt_patch_table *head_t)
+static int aicbt_patch_info_unpack(struct aicbt_patch_info_t *patch_info, struct aicbt_patch_table *head_t)
 {
     uint8_t *patch_info_array = (uint8_t*)patch_info;
     int base_len = 0;
@@ -1446,7 +1446,7 @@ int aicbt_patch_info_unpack(struct aicbt_patch_info_t *patch_info, struct aicbt_
     return 0;
 }
 
-int aicbt_ext_patch_data_load(struct aic_sdio_dev *sdiodev, struct aicbt_patch_info_t *patch_info)
+static int aicbt_ext_patch_data_load(struct aic_sdio_dev *sdiodev, struct aicbt_patch_info_t *patch_info)
 {
     int ret = 0;
     uint32_t ext_patch_nb = patch_info->ext_patch_nb;
@@ -1492,7 +1492,7 @@ int aicbt_ext_patch_data_load(struct aic_sdio_dev *sdiodev, struct aicbt_patch_i
 }
 
 
-int aicbt_patch_trap_data_load(struct aic_sdio_dev *sdiodev, struct aicbt_patch_table *head)
+static int aicbt_patch_trap_data_load(struct aic_sdio_dev *sdiodev, struct aicbt_patch_table *head)
 {
 	struct aicbt_patch_info_t patch_info = {
 		.info_len          = 0,
@@ -1633,7 +1633,7 @@ static struct aicbt_info_t aicbt_info[]={
 };
 
 
-int aicbt_patch_table_load(struct aic_sdio_dev *sdiodev, struct aicbt_patch_table *head)
+static int aicbt_patch_table_load(struct aic_sdio_dev *sdiodev, struct aicbt_patch_table *head)
 {
 	struct aicbt_patch_table *p;
 	int ret = 0, i;
@@ -1686,7 +1686,7 @@ int aicbt_patch_table_load(struct aic_sdio_dev *sdiodev, struct aicbt_patch_tabl
 }
 
 
-int aicbt_init(struct aic_sdio_dev *sdiodev)
+static int aicbt_init(struct aic_sdio_dev *sdiodev)
 {
     int ret = 0;
     struct aicbt_patch_table *head = aicbt_patch_table_alloc(aicbsp_firmware_list[aicbsp_info.cpmode].bt_table);
@@ -1892,7 +1892,7 @@ static int aicwifi_patch_config(struct aic_sdio_dev *sdiodev)
 	return 0;
 }
 
-int aicwifi_init(struct aic_sdio_dev *sdiodev)
+static int aicwifi_init(struct aic_sdio_dev *sdiodev)
 {
 	int ret = 0;
 	u32 fw_addr = ((sdiodev->chipid == PRODUCT_ID_AIC8800D80X2) && (!testmode))?RAM_FMAC_FW_ADDR_D80X2:RAM_FMAC_FW_ADDR;

@@ -51,6 +51,7 @@
 #include "aic_bsp_export.h"
 #include "aicwf_compat_8800dc.h"
 #include "aicwf_compat_8800d80.h"
+#include "../aic8800_bsp/aicwf_txq_prealloc.h"
 #include "rwnx_wakelock.h"
 #ifdef CONFIG_SDIO_BT
 #include "aic_btsdio.h"
@@ -547,10 +548,6 @@ u8 chip_sub_id = 0;
 u8 chip_mcu_id = 0;
 u8 chip_id = 0;
 
-int rwnx_init_cmd_array(void);
-void rwnx_free_cmd_array(void);
-
-
 /*********************************************************************
  * helper
  *********************************************************************/
@@ -882,7 +879,7 @@ void rwnx_external_auth_disable(struct rwnx_vif *vif)
  *
  * If there is no link then the power mode for next peer is used;
  */
-void rwnx_update_mesh_power_mode(struct rwnx_vif *vif)
+static void rwnx_update_mesh_power_mode(struct rwnx_vif *vif)
 {
 	enum nl80211_mesh_power_mode mesh_pm;
 	struct rwnx_sta *sta;
@@ -1467,7 +1464,7 @@ static struct net_device_stats *rwnx_get_stats(struct net_device *dev)
  *	Called to decide which queue to when device supports multiple
  *	transmit queues.
  */
-u16 rwnx_select_queue(struct net_device *dev, struct sk_buff *skb,
+static u16 rwnx_select_queue(struct net_device *dev, struct sk_buff *skb,
 					  struct net_device *sb_dev)
 {
 	struct rwnx_vif *rwnx_vif = netdev_priv(dev);
@@ -1754,9 +1751,9 @@ err:
 
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0)
-void aicwf_p2p_alive_timeout(ulong data)
+static void aicwf_p2p_alive_timeout(ulong data)
 #else
-void aicwf_p2p_alive_timeout(struct timer_list *t)
+static void aicwf_p2p_alive_timeout(struct timer_list *t)
 #endif
 {
 	struct rwnx_hw *rwnx_hw;
@@ -3061,7 +3058,7 @@ static int rwnx_cfg80211_del_station_compat(struct wiphy *wiphy,
 }
 
 
-void apm_staloss_work_process(struct work_struct *work)
+static void apm_staloss_work_process(struct work_struct *work)
 {
 	struct rwnx_hw *rwnx_hw = container_of(work, struct rwnx_hw, apmStalossWork);
 	struct rwnx_sta *cur, *tmp;
@@ -3169,7 +3166,7 @@ void apm_staloss_work_process(struct work_struct *work)
 }
 
 
-void apm_probe_sta_work_process(struct work_struct *work)
+static void apm_probe_sta_work_process(struct work_struct *work)
 {
        struct apm_probe_sta *probe_sta = container_of(work, struct apm_probe_sta, apmprobestaWork);
        struct rwnx_vif *rwnx_vif = container_of(probe_sta, struct rwnx_vif, sta_probe);
@@ -3678,7 +3675,7 @@ int rwnx_cfg80211_set_monitor_channel_(struct wiphy *wiphy,
  * @probe_client: probe an associated client, must return a cookie that it
  *	later passes to cfg80211_probe_status().
  */
-int rwnx_cfg80211_probe_client(struct wiphy *wiphy, struct net_device *dev,
+static int rwnx_cfg80211_probe_client(struct wiphy *wiphy, struct net_device *dev,
 			const u8 *peer, u64 *cookie)
 {
 //       struct rwnx_hw *rwnx_hw = wiphy_priv(wiphy);
@@ -3715,7 +3712,7 @@ int rwnx_cfg80211_probe_client(struct wiphy *wiphy, struct net_device *dev,
  *	registered. Note that this callback may not sleep, and cannot run
  *	concurrently with itself.
  */
-void rwnx_cfg80211_mgmt_frame_register(struct wiphy *wiphy,
+static void __maybe_unused rwnx_cfg80211_mgmt_frame_register(struct wiphy *wiphy,
 				   struct wireless_dev *wdev,
 				   u16 frame_type, bool reg)
 {
@@ -4324,7 +4321,7 @@ int rwnx_cfg80211_set_cqm_rssi_config(struct wiphy *wiphy,
  *	everything. It should do it's best to verify requests and reject them
  *	as soon as possible.
  */
-int rwnx_cfg80211_channel_switch (struct wiphy *wiphy,
+static int rwnx_cfg80211_channel_switch (struct wiphy *wiphy,
 								 struct net_device *dev,
 								 struct cfg80211_csa_settings *params)
 {
@@ -4493,7 +4490,7 @@ rwnx_cfg80211_tdls_mgmt(struct wiphy *wiphy,
 			printk("%s: only one TDLS link is supported!\n", __func__);
 			status_code = WLAN_STATUS_REQUEST_DECLINED;
 		}
-		/* fall-through */
+		fallthrough;
 	case WLAN_TDLS_SETUP_REQUEST:
 	case WLAN_TDLS_TEARDOWN:
 	case WLAN_TDLS_DISCOVERY_REQUEST:
@@ -4653,7 +4650,7 @@ rwnx_cfg80211_tdls_cancel_channel_switch (struct wiphy *wiphy,
 /**
  * @change_bss: Modify parameters for a given BSS (mainly for AP mode).
  */
-int rwnx_cfg80211_change_bss(struct wiphy *wiphy, struct net_device *dev,
+static int rwnx_cfg80211_change_bss(struct wiphy *wiphy, struct net_device *dev,
 							 struct bss_parameters *params)
 {
 	struct rwnx_vif *rwnx_vif = netdev_priv(dev);
@@ -5586,7 +5583,7 @@ static const struct wiphy_wowlan_support aic_wowlan_support = {
 extern int aicwf_vendor_init(struct wiphy *wiphy);
 extern txpwr_idx_conf_t nvram_txpwr_idx;
 
-int rwnx_ic_system_init(struct rwnx_hw *rwnx_hw){
+static int rwnx_ic_system_init(struct rwnx_hw *rwnx_hw){
 	u32 mem_addr;
 	struct dbg_mem_read_cfm rd_mem_addr_cfm;
 
@@ -5637,7 +5634,7 @@ int rwnx_ic_system_init(struct rwnx_hw *rwnx_hw){
 	return 0;
 }
 
-int rwnx_ic_rf_init(struct rwnx_hw *rwnx_hw){
+static int rwnx_ic_rf_init(struct rwnx_hw *rwnx_hw){
 	struct mm_set_rf_calib_cfm cfm;
 	int ret = 0;
 
@@ -5850,7 +5847,6 @@ void aic_ipc_setting(struct rwnx_vif *rwnx_vif){
 #endif
 
 extern int get_adap_test(void);
-extern void *aicwf_prealloc_txq_alloc(size_t size);
 extern char default_ccode[];
 
 int rwnx_cfg80211_init(struct rwnx_plat *rwnx_plat, void **platform_data)
